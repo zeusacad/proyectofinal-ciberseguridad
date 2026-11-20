@@ -1,0 +1,3 @@
+ARCHIVO DENTRO DEL CONTENEDOR: INTEGRIDAD VERIFICADA
+b6ee8ed9b62487ed613f73c0e180e2985c455eeec5e784f4fea63ae8149db011  /Users/abeta/Desktop/ZERO-DAY-LAB/datos/expedientes.csv
+b6ee8ed9b62487ed613f73c0e180e2985c455eeec5e784f4fea63ae8149db011  /Volumes/ZD-CIFRADO/expedientes.csv

@@ -1,0 +1,14 @@
+{
+  "eventos_analizados": 23,
+  "alertas_generadas": 1,
+  "alertas": [
+    {
+      "rule": "R6_REPEAT_DENIAL",
+      "username": "analista1",
+      "count": 8,
+      "severity": "media",
+      "summary": "Denegaciones repetidas de acceso en el laboratorio"
+    }
+  ],
+  "criterio": "Regla didáctica: >=3 denegaciones por usuario en el conjunto de registros analizado"
+}

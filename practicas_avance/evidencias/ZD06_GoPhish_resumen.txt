@@ -1,0 +1,11 @@
+ZD-06 | GOPHISH LOCAL - REGISTRO ORIGINAL
+Fecha: 2026-11-08T13:10:27-06:00
+Entorno: localhost; solo destinatarios ficticios; sin captura de credenciales.
+Campana ID: 1
+Mensajes localizados en Mailpit para el asunto de laboratorio: 5
+Envios confirmados segun GoPhish: 5
+Aperturas registradas por GoPhish: 1
+Clics registrados por GoPhish: 1
+Prueba del enlace: GET HTTP 200 (clic automatizado de prueba)
+AVISO: El clic automatizado no es conducta real de un usuario.
+AVISO: Si los envios siguen en proceso, repetir script para actualizar el registro.

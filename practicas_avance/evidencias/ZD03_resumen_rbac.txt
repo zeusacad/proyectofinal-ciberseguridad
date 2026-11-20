@@ -1,0 +1,7 @@
+admin_demo | administrador | usuarios:consultar | PERMITIDO | OK
+admin_demo | administrador | claves:consultar | DENEGADO | OK
+operador_demo | operador | expedientes:editar | PERMITIDO | OK
+operador_demo | operador | usuarios:consultar | DENEGADO | OK
+auditor_demo | auditor | auditoria:consultar | PERMITIDO | OK
+auditor_demo | auditor | expedientes:editar | DENEGADO | OK
+PRUEBAS CORRECTAS: 6 de 6

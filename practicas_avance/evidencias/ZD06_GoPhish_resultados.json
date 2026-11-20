@@ -1,0 +1,149 @@
+{
+  "fecha_consulta": "2026-11-08T13:10:27-06:00",
+  "alcance": "GoPhish y Mailpit exclusivamente en 127.0.0.1; cinco direcciones .test; sin contrasenas",
+  "tipo_interaccion": "prueba tecnica automatizada; NO representa cinco personas reales",
+  "campaign_id": 1,
+  "mailpit_emails_asunto_laboratorio": 5,
+  "clic_automatizado": "GET HTTP 200 (clic automatizado de prueba)",
+  "summary": {
+    "id": 1,
+    "created_date": "2026-11-08T19:10:24.553605Z",
+    "launch_date": "2026-11-08T19:10:24.553605Z",
+    "send_by_date": "0001-01-01T00:00:00Z",
+    "completed_date": "0001-01-01T00:00:00Z",
+    "status": "In progress",
+    "name": "ZD06 - Campana actualizacion software LOCAL",
+    "stats": {
+      "total": 5,
+      "sent": 5,
+      "opened": 1,
+      "clicked": 1,
+      "submitted_data": 0,
+      "email_reported": 0,
+      "error": 0
+    }
+  },
+  "results": [
+    {
+      "id": "FUPTpik",
+      "status": "Clicked Link",
+      "ip": "127.0.0.1",
+      "latitude": 0,
+      "longitude": 0,
+      "send_date": "2026-11-08T19:10:24.582742Z",
+      "reported": false,
+      "modified_date": "2026-11-08T19:10:26.659412Z",
+      "email": "prueba1@zero-day.test",
+      "first_name": "Ana",
+      "last_name": "Prueba",
+      "position": "Administracion"
+    },
+    {
+      "id": "darvrFS",
+      "status": "Email Sent",
+      "ip": "",
+      "latitude": 0,
+      "longitude": 0,
+      "send_date": "2026-11-08T19:10:24.589064Z",
+      "reported": false,
+      "modified_date": "2026-11-08T19:10:24.589064Z",
+      "email": "prueba2@zero-day.test",
+      "first_name": "Luis",
+      "last_name": "Prueba",
+      "position": "Operaciones"
+    },
+    {
+      "id": "w1nLbqR",
+      "status": "Email Sent",
+      "ip": "",
+      "latitude": 0,
+      "longitude": 0,
+      "send_date": "2026-11-08T19:10:24.596568Z",
+      "reported": false,
+      "modified_date": "2026-11-08T19:10:24.596568Z",
+      "email": "prueba3@zero-day.test",
+      "first_name": "Sofia",
+      "last_name": "Prueba",
+      "position": "Finanzas"
+    },
+    {
+      "id": "YbYwFvv",
+      "status": "Email Sent",
+      "ip": "",
+      "latitude": 0,
+      "longitude": 0,
+      "send_date": "2026-11-08T19:10:24.601289Z",
+      "reported": false,
+      "modified_date": "2026-11-08T19:10:24.601289Z",
+      "email": "prueba4@zero-day.test",
+      "first_name": "Diego",
+      "last_name": "Prueba",
+      "position": "Soporte"
+    },
+    {
+      "id": "Dbd05ho",
+      "status": "Email Sent",
+      "ip": "",
+      "latitude": 0,
+      "longitude": 0,
+      "send_date": "2026-11-08T19:10:24.604747Z",
+      "reported": false,
+      "modified_date": "2026-11-08T19:10:24.604747Z",
+      "email": "prueba5@zero-day.test",
+      "first_name": "Elena",
+      "last_name": "Prueba",
+      "position": "Auditoria"
+    }
+  ],
+  "timeline": [
+    {
+      "campaign_id": 1,
+      "email": "",
+      "time": "2026-11-08T19:10:24.557022Z",
+      "message": "Campaign Created",
+      "details": ""
+    },
+    {
+      "campaign_id": 1,
+      "email": "prueba1@zero-day.test",
+      "time": "2026-11-08T19:10:24.582742Z",
+      "message": "Email Sent",
+      "details": ""
+    },
+    {
+      "campaign_id": 1,
+      "email": "prueba2@zero-day.test",
+      "time": "2026-11-08T19:10:24.589064Z",
+      "message": "Email Sent",
+      "details": ""
+    },
+    {
+      "campaign_id": 1,
+      "email": "prueba3@zero-day.test",
+      "time": "2026-11-08T19:10:24.596568Z",
+      "message": "Email Sent",
+      "details": ""
+    },
+    {
+      "campaign_id": 1,
+      "email": "prueba4@zero-day.test",
+      "time": "2026-11-08T19:10:24.601289Z",
+      "message": "Email Sent",
+      "details": ""
+    },
+    {
+      "campaign_id": 1,
+      "email": "prueba5@zero-day.test",
+      "time": "2026-11-08T19:10:24.604747Z",
+      "message": "Email Sent",
+      "details": ""
+    },
+    {
+      "campaign_id": 1,
+      "email": "prueba1@zero-day.test",
+      "time": "2026-11-08T19:10:26.659412Z",
+      "message": "Clicked Link",
+      "details": "{\"payload\":{\"rid\":[\"FUPTpik\"]},\"browser\":{\"address\":\"127.0.0.1\",\"user-agent\":\"Zero-Day-Lab-Local/1.0\"}}"
+    }
+  ]
+}

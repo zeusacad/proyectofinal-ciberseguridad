@@ -1,0 +1,6 @@
+id,area,clasificacion,estado
+ZD-001,Operaciones,Confidencial,Activo
+ZD-002,Finanzas,Confidencial,En revision
+ZD-003,Continuidad,Interno,Activo
+ZD-004,Auditoria,Restringido,En revision
+ZD-005,Soporte,Interno,Cerrado

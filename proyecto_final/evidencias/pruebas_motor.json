@@ -1,0 +1,10 @@
+{
+  "fecha_utc": "2026-11-20T01:54:54+00:00",
+  "entorno": "motor Python stdlib, sin requerir Flask",
+  "total": 12,
+  "correctas": 12,
+  "fallos": 0,
+  "errores": 0,
+  "omitidas": 0,
+  "notas": "Los ensayos HTTP/OWASP ZAP son independientes de las pruebas del motor."
+}

@@ -1,0 +1,25 @@
+
+# Python
+**/.venv/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+
+# macOS
+.DS_Store
+
+# Archivos privados y temporales
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.cookies
+*.session
+*.session.*
+*.db
+*.sqlite3
+
+# Archivos temporales
+*.log

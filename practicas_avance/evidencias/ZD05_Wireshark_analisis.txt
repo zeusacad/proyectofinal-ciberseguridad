@@ -1,0 +1,6 @@
+CAPTURA REAL DE TRAFICO HTTP LOCAL (lo0, puerto 8765)
+Origen de trafico: GET a expediente ficticio desde el mismo Mac
+Consulta: http.request or http.response
+
+5	127.0.0.1	127.0.0.1	GET	/expedientes.csv	
+9	127.0.0.1	127.0.0.1		/expedientes.csv	200

@@ -1,0 +1,17 @@
+test_01_sql_vulnerable_all_rows (tests.test_core.CoreTests.test_01_sql_vulnerable_all_rows) ... ok
+test_02_sql_secure_zero_rows (tests.test_core.CoreTests.test_02_sql_secure_zero_rows) ... ok
+test_03_sql_legitimate_secure (tests.test_core.CoreTests.test_03_sql_legitimate_secure) ... ok
+test_04_sql_secure_min_privilege (tests.test_core.CoreTests.test_04_sql_secure_min_privilege) ... ok
+test_05_xss_vulnerable_raw (tests.test_core.CoreTests.test_05_xss_vulnerable_raw) ... ok
+test_06_xss_secure_escaped (tests.test_core.CoreTests.test_06_xss_secure_escaped) ... ok
+test_07_xss_secure_visible_as_text (tests.test_core.CoreTests.test_07_xss_secure_visible_as_text) ... ok
+test_08_idor_vulnerable_foreign (tests.test_core.CoreTests.test_08_idor_vulnerable_foreign) ... ok
+test_09_idor_secure_denied (tests.test_core.CoreTests.test_09_idor_secure_denied) ... ok
+test_10_idor_secure_own (tests.test_core.CoreTests.test_10_idor_secure_own) ... ok
+test_11_idor_secure_missing (tests.test_core.CoreTests.test_11_idor_secure_missing) ... ok
+test_12_monitoring_three_denials (tests.test_core.CoreTests.test_12_monitoring_three_denials) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.004s
+
+OK

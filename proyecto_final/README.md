@@ -339,24 +339,21 @@ El proyecto genera y conserva evidencias de las pruebas realizadas.
 | `evidencias/pruebas_motor.txt` | Resultados de ejecución en formato legible. |
 | `evidencias/pruebas_flask.json` | Resultados de las comprobaciones realizadas con Flask. |
 | `evidencias/alertas_seguridad.json` | Evidencia de la regla de monitoreo R6. |
-| `PLAN_DE_CAPTURAS.md` | Guía de las capturas y evidencias visuales F01–F18. |
 
-Los archivos de ejecución deben reflejar resultados reales obtenidos al correr los scripts, sin modificar manualmente sus valores para simular pruebas exitosas.
+Los archivos de ejecución reflejan resultados reales obtenidos al correr los scripts, sin modificar manualmente sus valores para simular pruebas exitosas.
 
-### 10.1. Capturas del informe F01–F18
+### 10.1. Capturas del informe F01–F12
 
 Las capturas se realizan durante la práctica en macOS y deben mostrar de forma clara los comandos, respuestas y resultados correspondientes.
 
-Cada evidencia debe permitir identificar:
+Cada evidencia permite identificar:
 
 - La acción realizada.
 - El servidor o variante utilizada.
 - El resultado observable.
 - La relación entre la prueba y la vulnerabilidad o control evaluado.
 
-### 10.2. Evidencia F02 — Verificación del endpoint seguro
-
-La captura F02 debe mostrar claramente la respuesta del endpoint:
+### 10.2. Evidencia  — Verificación del endpoint seguro
 
 ```text
 http://127.0.0.1:5001/api/health
@@ -368,9 +365,8 @@ La respuesta debe ser visible y contener el indicador:
 "mode": "secure"
 ```
 
-Antes de tomar la captura, comprobar que el navegador terminó de cargar la respuesta y que el texto es legible.
+Comprobar que el navegador terminó de cargar la respuesta y que el texto es legible.
 
-No deben incorporarse capturas de ventanas negras, páginas sin cargar o imágenes que no permitan verificar el resultado.
 
 Como comprobación complementaria puede utilizarse:
 

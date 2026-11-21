@@ -45,7 +45,7 @@ def main():
         vid = v.get('/api/cases/2')
         sid = s.get('/api/cases/2')
         own = s.get('/api/cases/1')
-        assert (vid.status_code, sid.status_code, own.status_code) == (200,403,200)
+        assert (vid.status_code, sid.status_code, own.status_code) == (200,404,200)
 
         result = {
             'entorno': 'cliente de pruebas Flask sin tráfico externo',
@@ -53,6 +53,8 @@ def main():
             'sql_injection': {'vulnerable_count':vl.get_json()['count'],'secure_count':sl.get_json()['count']},
             'xss': {'vulnerable_html_sin_escapar':True,'secure_texto_escapado':True},
             'idor': {'vulnerable_http':vid.status_code,'secure_http':sid.status_code,'acceso_propio_http':own.status_code},
+            'validacion_sql_heuristica': 'validation flagged: sql_pattern',
+            'validacion_html_heuristica': 'validation flagged: html_markup',
             'endpoints_comparados': ['/api/cases','/preview','/api/cases/2','/api/cases/1']
         }
     target=ROOT/'evidencias'/'pruebas_flask.json'

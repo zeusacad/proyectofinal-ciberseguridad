@@ -1,0 +1,25 @@
+{
+  "entorno": "cliente de pruebas Flask sin tráfico externo",
+  "resultado": "correcto",
+  "sql_injection": {
+    "vulnerable_count": 4,
+    "secure_count": 0
+  },
+  "xss": {
+    "vulnerable_html_sin_escapar": true,
+    "secure_texto_escapado": true
+  },
+  "idor": {
+    "vulnerable_http": 200,
+    "secure_http": 404,
+    "acceso_propio_http": 200
+  },
+  "validacion_sql_heuristica": "validation flagged: sql_pattern",
+  "validacion_html_heuristica": "validation flagged: html_markup",
+  "endpoints_comparados": [
+    "/api/cases",
+    "/preview",
+    "/api/cases/2",
+    "/api/cases/1"
+  ]
+}

@@ -7,10 +7,11 @@ La variante vulnerable reproduce fallas para su corrección; jamás desplegar p�
 from __future__ import annotations
 import argparse
 import hmac
+import hashlib
 import os
 from pathlib import Path
 from flask import Flask, Response, jsonify, redirect, render_template_string, request, session, url_for
-from cfcc_lab.core import ACCOUNTS, database, get_case, list_cases, preview, write_event, read_events, classify
+from cfcc_lab.core import ACCOUNTS, database, get_case, list_cases, preview, write_event, read_events, classify, suspicious_signal
 
 ROOT=Path(__file__).resolve().parent
 # CSS local incluido en la plantilla para conservar sin cambios la política CSP original.
@@ -149,8 +150,9 @@ def make_app(mode='secure',log_path=None):
 
     def page(contents):
         return render_template_string(PAGE,contents=contents,user=session.get('username'),mode_label='VARIANTE VULNERABLE' if mode=='vulnerable' else 'VARIANTE CORREGIDA',mode_is_secure=(mode=='secure'),css_contents=CSS)
-    def audit(event,outcome,endpoint,status):
-        write_event(logfile,event,session.get('username','anonimo'),outcome,endpoint,status)
+    def audit(event,outcome,endpoint,status,**fields):
+        write_event(logfile,event,session.get('username','anonimo'),outcome,endpoint,status,
+                    origin_ip=request.remote_addr,**fields)
     def logged_in():return session.get('username') in ACCOUNTS
 
     @app.get('/')
@@ -164,7 +166,10 @@ def make_app(mode='secure',log_path=None):
                 session.clear();session['username']=username
                 audit('authentication','allowed','/login',302)
                 return redirect(url_for('dashboard'))
-            write_event(logfile,'authentication',username[:40],'denied','/login',401)
+            uid = username if username in ACCOUNTS else (
+                'desconocido-' + hashlib.sha256(username.encode('utf-8')).hexdigest()[:8])
+            write_event(logfile,'authentication',uid,'denied','/login',401,
+                        origin_ip=request.remote_addr, reason='invalid_credentials')
             return page('<p class="login-error" role="alert"><b>Acceso incorrecto.</b> Verifica las credenciales de prueba.</p>'+login_form()),401
         return page(login_form())
     def login_form():
@@ -229,6 +234,12 @@ def make_app(mode='secure',log_path=None):
     def cases():
         if not logged_in():return jsonify(error='authentication_required'),401
         severity=request.args.get('severity','alta')
+        if mode == 'secure' and len(severity) > 60:
+            audit('validation','denied','/api/cases',400,reason='severity_too_long',input_length=len(severity))
+            return jsonify(error='invalid_severity'),400
+        signal=suspicious_signal(severity,'sql')
+        if signal:
+            audit('validation','flagged','/api/cases',200,signal=signal,input_length=len(severity))
         try:
             with database() as db:result=list_cases(db,severity,mode,session['username'])
         except Exception:
@@ -239,14 +250,20 @@ def make_app(mode='secure',log_path=None):
     @app.get('/api/cases/<int:case_id>')
     def case_detail(case_id):
         if not logged_in():return jsonify(error='authentication_required'),401
-        with database() as db:data,status=get_case(db,case_id,mode,session['username'])
-        audit('authorization','allowed' if status==200 else 'denied','/api/cases/:id',status)
-        return (jsonify(data),status) if status==200 else (jsonify(error='access_denied' if status==403 else 'not_found'),status)
+        with database() as db:data,status,reason=get_case(db,case_id,mode,session['username'],explain=True)
+        audit('authorization','allowed' if status==200 else 'denied','/api/cases/:id',
+              status,reason=reason,resource_id=case_id)
+        return (jsonify(data),status) if status==200 else (jsonify(error='not_found'),status)
     @app.get('/preview')
     def render_preview():
         if not logged_in():return redirect(url_for('login'))
         message=request.args.get('message','Nota de prueba')
-        if len(message)>500:return page('<p>Entrada demasiado larga.</p>'),400
+        if len(message)>500:
+            audit('validation','denied','/preview',400,reason='message_too_long',input_length=len(message))
+            return page('<p>Entrada demasiado larga.</p>'),400
+        signal=suspicious_signal(message,'html')
+        if signal:
+            audit('validation','flagged','/preview',200,signal=signal,input_length=len(message))
         audit('preview','allowed','/preview',200)
         # En modo vulnerable preview devuelve HTML sin escapado; solo en localhost.
         return page('<div class="page-heading"><p class="eyebrow">MÓDULO 03 / VALIDACIÓN DE CONTENIDO</p><h1>Vista previa de nota</h1><p>Representación del texto ingresado en el formulario de prueba.</p></div><div class="preview-wrapper"><p class="preview-label">CONTENIDO DEL MENSAJE</p>'+preview(message,mode)+'</div><a class="return-link" href="/dashboard">← Volver al panel</a>')
@@ -259,7 +276,7 @@ def make_app(mode='secure',log_path=None):
         import html
         raw=read_events(logfile)[-30:]
         report=classify(read_events(logfile))
-        body='<div class="page-heading"><p class="eyebrow">CONTROL Y AUDITORÍA / EVENTOS LOCALES</p><h1>Bitácora de seguridad</h1><p>Actividad reciente del servicio y señales detectadas.</p></div><div class="log-stats"><div><strong>'+str(len(raw))+'</strong><small>EVENTOS REGISTRADOS</small></div><div><strong>'+str(len(report))+'</strong><small>ALERTAS POR DENEGACIONES</small></div></div><div class="log-frame"><span>REGISTRO DE ACTIVIDAD / MÁXIMO 30 EVENTOS</span><pre>'+html.escape('\n'.join(f"{e['event']} | {e['username']} | {e['outcome']} | {e['status']}" for e in raw))+'</pre></div>'
+        body='<div class="page-heading"><p class="eyebrow">CONTROL Y AUDITORÍA / EVENTOS LOCALES</p><h1>Bitácora de seguridad</h1><p>Actividad reciente del servicio y señales detectadas.</p></div><div class="log-stats"><div><strong>'+str(len(raw))+'</strong><small>EVENTOS MOSTRADOS</small></div><div><strong>'+str(len(report))+'</strong><small>ALERTAS R6 / R1</small></div></div><div class="log-frame"><span>ALERTAS DETECTADAS / CONSULTA LOCAL</span><pre>'+html.escape('\n'.join(f"{a['rule']} | {a['username']} | {a['severity']} | {a['count_in_window']} en {a['window_min']} min" for a in report) or 'Sin alertas para la ventana configurada')+'</pre><span>REGISTRO DE ACTIVIDAD / MÁXIMO 30 EVENTOS</span><pre>'+html.escape('\n'.join(f"{e['event']} | {e['username']} | {e['outcome']} | {e['status']}" for e in raw))+'</pre></div>'
         return page(body)
     return app
 

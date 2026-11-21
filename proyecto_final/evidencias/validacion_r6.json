@@ -1,47 +1,89 @@
 {
-  "correctos": 6,
-  "total": 6,
+  "correctos": 12,
+  "total": 12,
   "casos": [
     {
-      "caso": "C1 positivo: analista1 con 3 denegaciones",
-      "eventos": 4,
+      "caso": "C1 R6 positivo: 3 denegaciones",
+      "eventos": 3,
       "alertas": 1,
       "esperado": 1,
       "ok": true
     },
     {
-      "caso": "C2 negativo: analista1 con 2 denegaciones",
+      "caso": "C2 R6 negativo: 2 denegaciones",
+      "eventos": 2,
+      "alertas": 0,
+      "esperado": 0,
+      "ok": true
+    },
+    {
+      "caso": "C3 R6 fuera de ventana (15 min)",
       "eventos": 3,
       "alertas": 0,
       "esperado": 0,
       "ok": true
     },
     {
-      "caso": "C3 negativo: 3 denegaciones separadas 15 min",
-      "eventos": 3,
-      "alertas": 0,
-      "esperado": 0,
+      "caso": "C4 R6 multiusuario 3 + 2",
+      "eventos": 5,
+      "alertas": 1,
+      "esperado": 1,
       "ok": true
     },
     {
-      "caso": "C4 multiusuario: analista1=3, analista2=2",
+      "caso": "C5 R6 multiusuario 3 + 4",
       "eventos": 7,
-      "alertas": 1,
-      "esperado": 1,
-      "ok": true
-    },
-    {
-      "caso": "C5 multiusuario: analista1=3, analista2=4",
-      "eventos": 9,
       "alertas": 2,
       "esperado": 2,
       "ok": true
     },
     {
-      "caso": "C6 supervisor sin denegaciones",
-      "eventos": 1,
+      "caso": "C6 R6 sin denegaciones",
+      "eventos": 0,
       "alertas": 0,
       "esperado": 0,
+      "ok": true
+    },
+    {
+      "caso": "C7 ventana exacta de 10:00",
+      "eventos": 3,
+      "alertas": 1,
+      "esperado": 1,
+      "ok": true
+    },
+    {
+      "caso": "C8 ventana 10:01: sin alerta",
+      "eventos": 3,
+      "alertas": 0,
+      "esperado": 0,
+      "ok": true
+    },
+    {
+      "caso": "C9 R1: 5 fallos en 10 minutos",
+      "eventos": 5,
+      "alertas": 1,
+      "esperado": 1,
+      "ok": true
+    },
+    {
+      "caso": "C10 R1: 4 fallos no alertan",
+      "eventos": 4,
+      "alertas": 0,
+      "esperado": 0,
+      "ok": true
+    },
+    {
+      "caso": "C11 R1: 5 fallos dispersos",
+      "eventos": 5,
+      "alertas": 0,
+      "esperado": 0,
+      "ok": true
+    },
+    {
+      "caso": "C12 R6 por origen con usuarios distintos",
+      "eventos": 3,
+      "alertas": 1,
+      "esperado": 1,
       "ok": true
     }
   ]

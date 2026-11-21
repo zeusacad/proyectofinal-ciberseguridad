@@ -1,0 +1,32 @@
+PROTOCOLO ZERO DAY / CFCC — RESULTADOS HTTP LOCALES
+Método: cliente de prueba Flask. No sustituye un informe de ZAP.
+
+F02  GET /api/health (servidor seguro)
+HTTP 200
+{"mode": "secure", "service": "CFCC laboratorio", "status": "ok"}
+
+F05  GET /api/cases?severity=[OR verdadera] (analista1, vulnerable)
+HTTP 200 — count=4
+Propietarios devueltos: analista1, analista2
+
+F06  GET /api/cases?severity=[OR verdadera] (analista1, corregida)
+HTTP 200
+{"cases": [], "count": 0, "mode": "secure"}
+
+UNION SELECT contra /api/cases (datos de prueba)
+Vulnerable: HTTP 200, count=1, id=99
+Corregida: HTTP 200, count=0
+
+IDOR/BOLA con analista1
+Expediente 2 (ajeno) vulnerable: HTTP 200
+Expediente 2 (ajeno) corregido: HTTP 404 {"error": "not_found"}
+Expediente 99 (no existe) corregido: HTTP 404 {"error": "not_found"}
+Expediente 1 (propio) corregido: HTTP 200
+
+Validación de entrada: severity de 100 caracteres: HTTP 400
+
+Monitoreo de tráfico HTTP real del cliente Flask
+Eventos registrados: 19
+R6_REPEAT_DENIAL: usuario=analista1; total=4; ventana=4; 2026-11-21T20:15:28+00:00 a 2026-11-21T20:15:28+00:00; severidad=media
+R1_REPEAT_AUTH_FAIL: usuario=analista2; total=5; ventana=5; 2026-11-21T20:15:28+00:00 a 2026-11-21T20:15:28+00:00; severidad=media
+Integridad SHA-256: VERIFICADA

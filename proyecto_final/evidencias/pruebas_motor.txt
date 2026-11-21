@@ -6,12 +6,22 @@ test_05_xss_vulnerable_raw (tests.test_core.CoreTests.test_05_xss_vulnerable_raw
 test_06_xss_secure_escaped (tests.test_core.CoreTests.test_06_xss_secure_escaped) ... ok
 test_07_xss_secure_visible_as_text (tests.test_core.CoreTests.test_07_xss_secure_visible_as_text) ... ok
 test_08_idor_vulnerable_foreign (tests.test_core.CoreTests.test_08_idor_vulnerable_foreign) ... ok
-test_09_idor_secure_denied (tests.test_core.CoreTests.test_09_idor_secure_denied) ... ok
+test_09_idor_secure_hidden (tests.test_core.CoreTests.test_09_idor_secure_hidden) ... ok
 test_10_idor_secure_own (tests.test_core.CoreTests.test_10_idor_secure_own) ... ok
 test_11_idor_secure_missing (tests.test_core.CoreTests.test_11_idor_secure_missing) ... ok
 test_12_monitoring_three_denials (tests.test_core.CoreTests.test_12_monitoring_three_denials) ... ok
+test_13_enumeration_same_public_code (tests.test_core.CoreTests.test_13_enumeration_same_public_code) ... ok
+test_14_list_scope_is_enforced_in_query (tests.test_core.CoreTests.test_14_list_scope_is_enforced_in_query) ... ok
+test_15_union_on_real_core_query (tests.test_core.CoreTests.test_15_union_on_real_core_query) ... ok
+test_16_suspicious_heuristics (tests.test_core.CoreTests.test_16_suspicious_heuristics) ... ok
+test_17_exact_boundary_included (tests.test_core.CoreTests.test_17_exact_boundary_included) ... ok
+test_18_over_boundary_excluded (tests.test_core.CoreTests.test_18_over_boundary_excluded) ... ok
+test_19_auth_failure_threshold (tests.test_core.CoreTests.test_19_auth_failure_threshold) ... ok
+test_20_alert_dates_and_severity (tests.test_core.CoreTests.test_20_alert_dates_and_severity) ... ok
+test_21_origin_mixed_accounts (tests.test_core.CoreTests.test_21_origin_mixed_accounts) ... ok
+test_22_log_chain_detects_change (tests.test_core.CoreTests.test_22_log_chain_detects_change) ... ok
 
 ----------------------------------------------------------------------
-Ran 12 tests in 0.004s
+Ran 22 tests in 0.007s
 
 OK

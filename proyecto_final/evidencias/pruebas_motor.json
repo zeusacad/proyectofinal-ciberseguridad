@@ -1,8 +1,8 @@
 {
-  "fecha_utc": "2026-11-20T01:54:54+00:00",
+  "fecha_utc": "2026-11-21T20:13:24+00:00",
   "entorno": "motor Python stdlib, sin requerir Flask",
-  "total": 12,
-  "correctas": 12,
+  "total": 22,
+  "correctas": 22,
   "fallos": 0,
   "errores": 0,
   "omitidas": 0,

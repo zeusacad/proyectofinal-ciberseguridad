@@ -1,43 +1,56 @@
-"""Valida la regla R6_REPEAT_DENIAL: caso positivo, negativos, ventana y varios usuarios.
-
-Genera eventos con write_event (archivos temporales) y los analiza con classify.
-"""
-import json,sys,tempfile
-from datetime import datetime,timedelta,timezone
+"""Verifica ventanas exactas, correlación y reglas R6/R1 con datos locales."""
+import json
+import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
-from cfcc_lab.core import classify,write_event,read_events
 
-def real(denials):
-    """denials = {usuario: n}; añade además un acceso permitido por usuario."""
-    with tempfile.TemporaryDirectory() as tmp:
-        f=Path(tmp)/'e.jsonl'
-        for u,n in denials.items():
-            write_event(f,'authorization',u,'allowed','/api/cases/:id',200)
-            for _ in range(n):write_event(f,'authorization',u,'denied','/api/cases/:id',403)
-        ev=read_events(f)
-    return classify(ev),len(ev)
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from cfcc_lab.core import classify
 
-def spaced(minutes,n=3):
-    base=datetime(2026,11,20,9,0,tzinfo=timezone.utc)
-    ev=[{'timestamp_utc':(base+timedelta(minutes=minutes*i)).isoformat(timespec='seconds'),'event':'authorization',
-         'username':'analista1','outcome':'denied','endpoint':'/api/cases/:id','status':403} for i in range(n)]
-    return classify(ev),len(ev)
+BASE = datetime(2026, 11, 21, 9, 0, tzinfo=timezone.utc)
 
-cases=[('C1 positivo: analista1 con 3 denegaciones',real({'analista1':3}),1),
- ('C2 negativo: analista1 con 2 denegaciones',real({'analista1':2}),0),
- ('C3 negativo: 3 denegaciones separadas 15 min',spaced(15),0),
- ('C4 multiusuario: analista1=3, analista2=2',real({'analista1':3,'analista2':2}),1),
- ('C5 multiusuario: analista1=3, analista2=4',real({'analista1':3,'analista2':4}),2),
- ('C6 supervisor sin denegaciones',real({'supervisor':0}),0)]
-rows=[];ok=0
-print(f"{'Caso':48} {'eventos':>7} {'alertas':>7} {'esperado':>8}  resultado")
-for name,(alerts,total),exp in cases:
-    good=len(alerts)==exp;ok+=good
-    users=','.join(a['username'] for a in alerts) or '-'
-    print(f"{name:48} {total:>7} {len(alerts):>7} {exp:>8}  {'OK' if good else 'FALLO'}  [{users}]")
-    rows.append({'caso':name,'eventos':total,'alertas':len(alerts),'esperado':exp,'ok':good})
-print(f'\nValidación R6: {ok}/{len(cases)} casos correctos (umbral=3, ventana=10 min)')
-out=ROOT/'evidencias'/'validacion_r6.json'
-out.write_text(json.dumps({'correctos':ok,'total':len(cases),'casos':rows},ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-raise SystemExit(0 if ok==len(cases) else 1)
+
+def event(minutes, kind='authorization', who='analista1', origin=None):
+    e = {'timestamp_utc': (BASE + timedelta(minutes=minutes)).isoformat(timespec='seconds'),
+         'event': kind, 'username': who, 'outcome': 'denied',
+         'endpoint': '/login' if kind == 'authentication' else '/api/cases/:id',
+         'status': 401 if kind == 'authentication' else 404}
+    if origin:
+        e['origin_ip'] = origin
+    return e
+
+
+def entries(minutes, **kwargs):
+    return [event(m, **kwargs) for m in minutes]
+
+
+cases = [
+    ('C1 R6 positivo: 3 denegaciones', entries([0, 1, 2]), 1),
+    ('C2 R6 negativo: 2 denegaciones', entries([0, 1]), 0),
+    ('C3 R6 fuera de ventana (15 min)', entries([0, 15, 30]), 0),
+    ('C4 R6 multiusuario 3 + 2', entries([0, 1, 2]) + entries([0, 1], who='analista2'), 1),
+    ('C5 R6 multiusuario 3 + 4', entries([0, 1, 2]) + entries([0, 1, 2, 3], who='analista2'), 2),
+    ('C6 R6 sin denegaciones', [], 0),
+    ('C7 ventana exacta de 10:00', entries([0, 5, 10]), 1),
+    ('C8 ventana 10:01: sin alerta', [event(0), event(5), event(10 + 1/60)], 0),
+    ('C9 R1: 5 fallos en 10 minutos', entries([0, 1, 2, 3, 4], kind='authentication'), 1),
+    ('C10 R1: 4 fallos no alertan', entries([0, 1, 2, 3], kind='authentication'), 0),
+    ('C11 R1: 5 fallos dispersos', entries([0, 11, 22, 33, 44], kind='authentication'), 0),
+    ('C12 R6 por origen con usuarios distintos', entries([0, 1], origin='127.0.0.1') + entries([2], who='analista2', origin='127.0.0.1'), 1),
+]
+
+rows = []
+for name, records, expected in cases:
+    alerts = classify(records)
+    good = len(alerts) == expected
+    rows.append({'caso': name, 'eventos': len(records), 'alertas': len(alerts),
+                 'esperado': expected, 'ok': good})
+    print(f'{name:49} {len(records):>4} eventos | {len(alerts)} alertas | {"OK" if good else "FALLO"}')
+
+ok = sum(row['ok'] for row in rows)
+print(f'\nValidación R6 / R1: {ok}/{len(rows)} casos correctos')
+out = ROOT/'evidencias'/'validacion_r6.json'
+out.parent.mkdir(exist_ok=True)
+out.write_text(json.dumps({'correctos': ok, 'total': len(rows), 'casos': rows}, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+raise SystemExit(0 if ok == len(rows) else 1)

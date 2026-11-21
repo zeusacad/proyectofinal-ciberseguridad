@@ -1,0 +1,152 @@
+{
+  "fecha_utc": "2026-11-21T20:15:28+00:00",
+  "metodo": "Flask test_client; ejecución HTTP local sin ZAP",
+  "health": {
+    "vulnerable": {
+      "http": 200,
+      "body": {
+        "mode": "vulnerable",
+        "service": "CFCC laboratorio",
+        "status": "ok"
+      }
+    },
+    "secure": {
+      "http": 200,
+      "body": {
+        "mode": "secure",
+        "service": "CFCC laboratorio",
+        "status": "ok"
+      }
+    }
+  },
+  "sql_or": {
+    "vulnerable_count": 4,
+    "secure_count": 0,
+    "exposicion_de_otros_duenos": [
+      "analista1",
+      "analista2"
+    ]
+  },
+  "sql_union": {
+    "vulnerable": {
+      "http": 200,
+      "body": {
+        "cases": [
+          {
+            "id": 99,
+            "notes": "x",
+            "owner": "x",
+            "severity": "x",
+            "title": "x"
+          }
+        ],
+        "count": 1,
+        "mode": "vulnerable"
+      }
+    },
+    "secure": {
+      "http": 200,
+      "body": {
+        "cases": [],
+        "count": 0,
+        "mode": "secure"
+      }
+    }
+  },
+  "idor_listado": {
+    "vulnerable": {
+      "http": 200,
+      "body": {
+        "cases": [
+          {
+            "id": 2,
+            "notes": "Ejemplo ficticio de seguimiento.",
+            "owner": "analista2",
+            "severity": "media",
+            "title": "Solicitud interinstitucional"
+          }
+        ],
+        "count": 1,
+        "mode": "vulnerable"
+      }
+    },
+    "secure": {
+      "http": 200,
+      "body": {
+        "cases": [],
+        "count": 0,
+        "mode": "secure"
+      }
+    }
+  },
+  "idor_objeto": {
+    "ajeno_vulnerable": {
+      "http": 200,
+      "body": {
+        "id": 2,
+        "notes": "Ejemplo ficticio de seguimiento.",
+        "owner": "analista2",
+        "severity": "media",
+        "title": "Solicitud interinstitucional"
+      }
+    },
+    "ajeno_seguro": {
+      "http": 404,
+      "body": {
+        "error": "not_found"
+      }
+    },
+    "inexistente_seguro": {
+      "http": 404,
+      "body": {
+        "error": "not_found"
+      }
+    },
+    "propio_seguro": {
+      "http": 200,
+      "body": {
+        "id": 1,
+        "notes": "Expediente inventado de continuidad.",
+        "owner": "analista1",
+        "severity": "alta",
+        "title": "Alerta de coordinación"
+      }
+    }
+  },
+  "entrada_larga": {
+    "status": 400,
+    "error": {
+      "error": "invalid_severity"
+    }
+  },
+  "monitoring": {
+    "eventos": 19,
+    "alertas": [
+      {
+        "rule": "R6_REPEAT_DENIAL",
+        "username": "analista1",
+        "total_denials": 4,
+        "count_in_window": 4,
+        "first_ts": "2026-11-21T20:15:28+00:00",
+        "last_ts": "2026-11-21T20:15:28+00:00",
+        "window_min": 10,
+        "severity": "media",
+        "summary": "Denegaciones repetidas de acceso en el laboratorio",
+        "distinct_case_ids_in_window": 2
+      },
+      {
+        "rule": "R1_REPEAT_AUTH_FAIL",
+        "username": "analista2",
+        "total_auth_failures": 5,
+        "count_in_window": 5,
+        "first_ts": "2026-11-21T20:15:28+00:00",
+        "last_ts": "2026-11-21T20:15:28+00:00",
+        "window_min": 10,
+        "severity": "media",
+        "summary": "Intentos repetidos de autenticación fallida en el laboratorio"
+      }
+    ],
+    "integridad_sha256": true,
+    "linea_error": null
+  }
+}

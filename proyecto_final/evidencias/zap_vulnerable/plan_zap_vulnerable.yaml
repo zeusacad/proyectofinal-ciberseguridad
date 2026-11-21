@@ -1,0 +1,79 @@
+env:
+  contexts:
+    - name: CFCC_vulnerable
+      urls:
+        - "http://127.0.0.1:5002/"
+      includePaths:
+        - 'http://127[.]0[.]0[.]1:5002/.*'
+      excludePaths:
+        - 'http://127[.]0[.]0[.]1:5002/logout.*'
+      authentication:
+        method: form
+        parameters:
+          loginPageUrl: "http://127.0.0.1:5002/login"
+          loginRequestUrl: "http://127.0.0.1:5002/login"
+          loginRequestBody: 'username={%username%}&password={%password%}'
+        verification:
+          method: poll
+          pollUrl: "http://127.0.0.1:5002/dashboard"
+          pollFrequency: 2
+          pollUnits: requests
+          loggedInRegex: 'SESIÓN AUTENTICADA'
+          loggedOutRegex: 'IDENTIFICACIÓN DE USUARIO'
+      sessionManagement:
+        method: cookie
+      users:
+        - name: analista1
+          credentials:
+            username: analista1
+            password: demo1234
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+jobs:
+  - type: requestor
+    parameters:
+      user: analista1
+    requests:
+      - {url: "http://127.0.0.1:5002/dashboard", name: "panel autenticado", method: GET, responseCode: 200}
+      - {url: "http://127.0.0.1:5002/api/cases?severity=alta", name: "SQLi campo severity", method: GET, responseCode: 200}
+      - {url: "http://127.0.0.1:5002/api/cases?severity=media", name: "listado y propiedad", method: GET, responseCode: 200}
+      - {url: "http://127.0.0.1:5002/api/cases/1", name: "expediente propio", method: GET, responseCode: 200}
+      - {url: "http://127.0.0.1:5002/preview?message=Nota%20de%20prueba", name: "XSS campo message", method: GET, responseCode: 200}
+      - {url: "http://127.0.0.1:5002/api/cases?severity=%27%20OR%20%271%27%3D%271", name: "SQLi manual verificado por ZAP", method: GET, responseCode: 200}
+      - {url: "http://127.0.0.1:5002/preview?message=%3Cimg%20src%3Dx%20onerror%3Dalert%281%29%3E", name: "XSS manual verificado por ZAP", method: GET, responseCode: 200}
+  - type: spider
+    parameters:
+      context: CFCC_vulnerable
+      user: analista1
+      url: "http://127.0.0.1:5002/dashboard"
+      maxDuration: 2
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 2
+  - type: activeScan
+    parameters:
+      context: CFCC_vulnerable
+      user: analista1
+      maxScanDurationInMins: 5
+      maxRuleDurationInMins: 1
+      defaultStrength: Medium
+      defaultThreshold: Medium
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 2
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: "/Users/abeta/Desktop/Tecmilenio/Ciberseguridad/final/ZERO-DAY-LAB/proyecto_final/evidencias/zap_vulnerable"
+      reportFile: "reporte_zap_vulnerable.html"
+      reportTitle: "CFCC - OWASP ZAP - vulnerable"
+      displayReport: false
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: "/Users/abeta/Desktop/Tecmilenio/Ciberseguridad/final/ZERO-DAY-LAB/proyecto_final/evidencias/zap_vulnerable"
+      reportFile: "reporte_zap_vulnerable.json"
+      reportTitle: "CFCC - OWASP ZAP - vulnerable"
+      displayReport: false

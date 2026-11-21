@@ -1,12 +1,12 @@
 {
-  "eventos_analizados": 23,
+  "eventos_analizados": 41,
   "alertas_generadas": 1,
   "alertas": [
     {
       "rule": "R6_REPEAT_DENIAL",
       "username": "analista1",
-      "count": 8,
-      "max_in_window": 3,
+      "count": 13,
+      "max_in_window": 5,
       "window_min": 10,
       "severity": "media",
       "summary": "Denegaciones repetidas de acceso en el laboratorio"

@@ -1,0 +1,102 @@
+[1mVerificación laboratorio CFCC[0m  2026-11-21 13:33:26
+Objetivos: vulnerable=127.0.0.1:5000  secure=127.0.0.1:5001
+
+[1m== 0. Estado de las variantes ==[0m
+  5000 -> 
+  5001 -> 
+  [31m[FALLA][0m 5000 no responde como vulnerable (¿está levantada?)
+  [31m[FALLA][0m 5001 no responde como secure (¿está levantada?)
+  [31m[FALLA][0m login analista1 en 5000 devolvió 403
+  [31m[FALLA][0m login supervisor en 5000 devolvió 403
+  [31m[FALLA][0m login analista1 en 5001 devolvió 000
+  [31m[FALLA][0m login supervisor en 5001 devolvió 000
+
+[1m== 1. SQL Injection  (GET /api/cases?severity=) ==[0m
+  [31m[FALLA][0m vulnerable: esperado 4, obtenido ?
+  [31m[FALLA][0m corregida: esperado 0, obtenido ?
+  [31m[FALLA][0m regresión: esperado 2, obtenido ?
+  [33m[INFO][0m  vulnerable: UNION no devolvió filas (count=?); puede que el orden/nº de columnas difiera
+  [31m[FALLA][0m corregida: UNION devolvió ?
+  [33m[INFO][0m  corregida: severity de 100 caracteres -> HTTP 000 (el código corta a 60)
+
+[1m== 2. XSS reflejado  (GET /preview?message=) ==[0m
+  [31m[FALLA][0m vulnerable: no se encontró la etiqueta cruda
+  [31m[FALLA][0m corregida: no se encontró salida escapada
+  [32m[PASA][0m  corregida: no hay etiqueta cruda en el cuerpo
+  [33m[INFO][0m  Para ver la ejecución real abre en el navegador: http://127.0.0.1:5000/preview?message=%3Cimg%20src=x%20onerror=alert(1)%3E
+
+[1m== 3. IDOR/BOLA  (GET /api/cases/<id> con analista1) ==[0m
+  [31m[FALLA][0m vulnerable: esperado 200, obtenido 403
+  [31m[FALLA][0m corregida: esperado 403, obtenido 000
+  [31m[FALLA][0m regresión: esperado 200, obtenido 000
+  [31m[FALLA][0m corregida: esperado 404, obtenido 000
+  [31m[FALLA][0m regresión: supervisor esperado 200, obtenido 000
+  [33m[INFO][0m  corregida: sin sesión, /api/cases/1 -> HTTP 000 (debería ser 401/302/403, no 200)
+  Enumeración de IDs en 5001 (403 vs 404 revela si el objeto existe):
+    id=1   -> HTTP 000
+    id=2   -> HTTP 000
+    id=3   -> HTTP 000
+    id=4   -> HTTP 000
+    id=99  -> HTTP 000
+  [33m[INFO][0m  Hallazgo documentado por el equipo: 403 vs 404 permite enumerar IDs; recomiendan normalizar a 404
+
+[1m== 4. Cabeceras de seguridad y cookies ==[0m
+  Puerto 5000:
+    - Content-Security-Policy: AUSENTE
+    - X-Content-Type-Options: AUSENTE
+    - X-Frame-Options: AUSENTE
+  Puerto 5001:
+    - Content-Security-Policy: AUSENTE
+    - X-Content-Type-Options: AUSENTE
+    - X-Frame-Options: AUSENTE
+  [32m[PASA][0m  CSP solo en la variante segura (5001)
+  Cookie de sesión en 5000: <no encontrada>
+    HttpOnly: no
+    SameSite: no
+    Secure:   no (esperable sin HTTPS; es lo que ZAP marcó como Medio)
+  Cookie de sesión en 5001: <no encontrada>
+    HttpOnly: no
+    SameSite: no
+    Secure:   no (esperable sin HTTPS; es lo que ZAP marcó como Medio)
+
+[1m== 5. Bitácora y regla R6 ==[0m
+  Eventos en logs/secure_events.jsonl:       23
+  Denegaciones registradas: 9
+  [33m[INFO][0m  Omitida prueba de username crudo en logs (usa --log-test; modifica la bitácora)
+
+[1m== 6. Pruebas automatizadas del repositorio ==[0m
+  ----------------------------------------------------------------------
+  Ran 17 tests in 0.090s
+  
+  OK
+  [32m[PASA][0m  unittest con -W error::ResourceWarning: OK
+  C6 supervisor sin denegaciones                         1       0        0  OK  [-]
+  
+  Validación R6: 6/6 casos correctos (umbral=3, ventana=10 min)
+  [32m[PASA][0m  validate_r6.py: 6/6 casos correctos
+  event_report.py:
+    {
+      "eventos_analizados": 23,
+      "alertas_generadas": 1,
+      "alertas": [
+        {
+          "rule": "R6_REPEAT_DENIAL",
+          "username": "analista1",
+          "count": 8,
+          "max_in_window": 3,
+          "window_min": 10,
+          "severity": "media",
+          "summary": "Denegaciones repetidas de acceso en el laboratorio"
+        }
+      ],
+      "ventana_min": 10,
+      "criterio": "Regla didáctica: >=3 denegaciones por usuario dentro de una ventana de 10 minutos"
+    }
+
+[1m== 7. OWASP ZAP (opcional) ==[0m
+  [33m[INFO][0m  Omitido (usa --zap)
+
+[1m== RESUMEN ==[0m
+  [32mPasan: 4[0m   [31mFallan: 17[0m   [33mInfo: 7[0m
+  Reporte guardado en: reporte_verificacion_20261121_133326.txt
+  [31mResultado: hay diferencias con lo documentado; revisa los [FALLA][0m

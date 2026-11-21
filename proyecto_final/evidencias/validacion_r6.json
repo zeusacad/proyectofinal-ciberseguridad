@@ -1,0 +1,48 @@
+{
+  "correctos": 6,
+  "total": 6,
+  "casos": [
+    {
+      "caso": "C1 positivo: analista1 con 3 denegaciones",
+      "eventos": 4,
+      "alertas": 1,
+      "esperado": 1,
+      "ok": true
+    },
+    {
+      "caso": "C2 negativo: analista1 con 2 denegaciones",
+      "eventos": 3,
+      "alertas": 0,
+      "esperado": 0,
+      "ok": true
+    },
+    {
+      "caso": "C3 negativo: 3 denegaciones separadas 15 min",
+      "eventos": 3,
+      "alertas": 0,
+      "esperado": 0,
+      "ok": true
+    },
+    {
+      "caso": "C4 multiusuario: analista1=3, analista2=2",
+      "eventos": 7,
+      "alertas": 1,
+      "esperado": 1,
+      "ok": true
+    },
+    {
+      "caso": "C5 multiusuario: analista1=3, analista2=4",
+      "eventos": 9,
+      "alertas": 2,
+      "esperado": 2,
+      "ok": true
+    },
+    {
+      "caso": "C6 supervisor sin denegaciones",
+      "eventos": 1,
+      "alertas": 0,
+      "esperado": 0,
+      "ok": true
+    }
+  ]
+}

@@ -85,3 +85,19 @@ Ver `PLAN_DE_CAPTURAS.md` para qué pantallas y resultados debe mostrar cada una
 - El cifrado de macOS, GoPhish y el tráfico previo están documentados en `../practicas_avance/` y son una etapa independiente.
 - `SESSION_COOKIE_SECURE=False` permite la demostración por HTTP local, no producción; en Internet serían necesarios HTTPS, CSRF, autenticación corporativa, rotación de claves y un repositorio central protegido.
 - El modo vulnerable siempre está limitado a `127.0.0.1`; jamás convertirlo en servicio público.
+
+## Credenciales de demostración
+
+`analista1`, `analista2` y `supervisor` usan la clave `demo1234`: es **ficticia**, exclusiva de este laboratorio
+(127.0.0.1), no pertenece a ninguna cuenta real y no debe reutilizarse en ningún otro sistema.
+
+## Regla R6 con ventana y su validación
+
+La regla `R6_REPEAT_DENIAL` alerta si un usuario acumula 3 denegaciones de autorización dentro de una ventana
+deslizante de 10 minutos (`classify(events, threshold=3, window_min=10)`).
+
+```bash
+python scripts/validate_r6.py                      # 6 casos: positivo, negativos, ventana y multiusuario
+python scripts/event_report.py --window 10         # analiza logs/secure_events.jsonl
+python -W error::ResourceWarning -m unittest discover -s tests -v   # 17 pruebas, sin avisos
+```

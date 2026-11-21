@@ -1,5 +1,7 @@
 """Cinco verificaciones HTTP vía cliente de prueba cuando Flask está instalado."""
+import tempfile
 import unittest
+from pathlib import Path
 try:
     from app import make_app
     FLASK_AVAILABLE=True
@@ -9,8 +11,10 @@ except ImportError:
 @unittest.skipUnless(FLASK_AVAILABLE,'Flask no instalado; instalar requirements.txt para pruebas HTTP')
 class FlaskEndpointTests(unittest.TestCase):
     def setUp(self):
-        self.app_v=make_app('vulnerable')
-        self.app_s=make_app('secure')
+        # Bitácoras temporales: las pruebas no deben contaminar logs/ (evidencia de la regla R6)
+        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
+        self.app_v=make_app('vulnerable',log_path=Path(self.tmp.name)/'v.jsonl')
+        self.app_s=make_app('secure',log_path=Path(self.tmp.name)/'s.jsonl')
         self.v=self.app_v.test_client();self.s=self.app_s.test_client()
     def auth(self, client, username='analista1'):
         r=client.post('/login',data={'username':username,'password':'demo1234'})

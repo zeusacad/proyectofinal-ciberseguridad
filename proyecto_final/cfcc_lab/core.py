@@ -7,7 +7,7 @@ import html
 import json
 import sqlite3
 from collections import Counter
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROWS = [
@@ -18,8 +18,16 @@ ROWS = [
 ]
 ACCOUNTS = {'analista1':'demo1234', 'analista2':'demo1234', 'supervisor':'demo1234'}
 
+class _Conn(sqlite3.Connection):
+    """Conexión que se cierra al salir de `with`, para no dejar recursos abiertos (ResourceWarning)."""
+    def __exit__(self, *exc):
+        try:
+            return super().__exit__(*exc)
+        finally:
+            self.close()
+
 def database():
-    db=sqlite3.connect(':memory:')
+    db=sqlite3.connect(':memory:',factory=_Conn)
     db.row_factory=sqlite3.Row
     db.execute('CREATE TABLE cases (id INTEGER PRIMARY KEY, owner TEXT, severity TEXT, title TEXT, notes TEXT)')
     db.executemany('INSERT INTO cases VALUES (?, ?, ?, ?, ?)', ROWS)
@@ -53,13 +61,25 @@ def preview(message, mode):
         return '<div class="preview">'+message+'</div>'
     return '<div class="preview">'+html.escape(message, quote=True)+'</div>'
 
-def classify(events, threshold=3):
-    """Señal de tres denegaciones para un mismo actor en una ventana local de análisis."""
-    counter=Counter(e.get('username','desconocido') for e in events if e.get('event')=='authorization' and e.get('outcome')=='denied')
+def classify(events, threshold=3, window_min=10):
+    """Alerta R6 si un mismo actor acumula `threshold` denegaciones de autorización
+    dentro de una ventana deslizante de `window_min` minutos."""
+    times={}
+    for e in events:
+        if e.get('event')=='authorization' and e.get('outcome')=='denied':
+            try:
+                t=datetime.fromisoformat(e['timestamp_utc'])
+            except (KeyError,ValueError):
+                continue
+            times.setdefault(e.get('username','desconocido'),[]).append(t)
+    window=timedelta(minutes=window_min)
     alerts=[]
-    for username, count in sorted(counter.items()):
-        if count>=threshold:
-            alerts.append({'rule':'R6_REPEAT_DENIAL','username':username,'count':count,'severity':'media',
+    for username in sorted(times):
+        ts=sorted(times[username])
+        best=max(sum(1 for t in ts[i:] if t-t0<=window) for i,t0 in enumerate(ts))
+        if best>=threshold:
+            alerts.append({'rule':'R6_REPEAT_DENIAL','username':username,'count':len(ts),
+                           'max_in_window':best,'window_min':window_min,'severity':'media',
                            'summary':'Denegaciones repetidas de acceso en el laboratorio'})
     return alerts
 
